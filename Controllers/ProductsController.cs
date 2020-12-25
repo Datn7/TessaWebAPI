@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TessaWebAPI.Data;
 using TessaWebAPI.Entities;
+using TessaWebAPI.Interfaces;
 
 namespace TessaWebAPI.Controllers
 {
@@ -14,35 +15,39 @@ namespace TessaWebAPI.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly StoreContext storeContext;
+        private readonly IProductRepository productRepository;
 
-        public ProductsController(StoreContext storeContext)
+        public ProductsController(IProductRepository productRepository )
         {
-            this.storeContext = storeContext;
+            this.productRepository = productRepository;
         }
 
         [HttpGet]
         public async Task<ActionResult<List<Product>>> GetProductsAsync()
         {
-            var products = await storeContext.Products.ToListAsync();
+            var products = await productRepository.GetProductsAsync();
             return Ok(products);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            return await storeContext.Products.FindAsync(id);
+            return await productRepository.GetProductByIdAsync(id);
         }
 
-        [HttpGet("sync")]
-        public ActionResult<List<Product>> GetProductsSync()
+        [HttpGet("brands")]
+        public async Task<ActionResult<IReadOnlyList<ProductBrand>>> GetProductBrands()
         {
-            
-            var products = storeContext.Products.ToList();
-
-            return Ok(products);
+            return Ok(await productRepository.GetProductBrandsAsync());
         }
 
-        
+
+        [HttpGet("types")]
+        public async Task<ActionResult<IReadOnlyList<ProductType>>> GetProductTypes()
+        {
+            return Ok(await productRepository.GetProductTypesAsync());
+        }
+
+
     }
 }

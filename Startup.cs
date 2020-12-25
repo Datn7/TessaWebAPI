@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TessaWebAPI.Data;
+using TessaWebAPI.Implementation;
+using TessaWebAPI.Interfaces;
 
 namespace TessaWebAPI
 {
@@ -34,7 +36,10 @@ namespace TessaWebAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TessaWebAPI", Version = "v1" });
             });
+            //add sql sever connection link 
             services.AddDbContext<StoreContext>(db => db.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            //use product repository pattern
+            services.AddScoped<IProductRepository, ProductRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
