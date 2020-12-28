@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using TessaWebAPI.Data;
 using TessaWebAPI.Entities;
 using TessaWebAPI.Interfaces;
+using TessaWebAPI.Specifications;
 
 namespace TessaWebAPI.Controllers
 {
@@ -15,37 +16,53 @@ namespace TessaWebAPI.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly IProductRepository productRepository;
+        private readonly IGenericRepository<Product> productsRepo;
+        private readonly IGenericRepository<ProductBrand> productBrandRepo;
+        private readonly IGenericRepository<ProductType> productTypeRepo;
 
-        public ProductsController(IProductRepository productRepository )
+
+        //access to dbcontext with generic repository, each dbset need one instace
+        public ProductsController(
+            IGenericRepository<Product> productsRepo, 
+            IGenericRepository<ProductBrand> productBrandRepo, 
+            IGenericRepository<ProductType> productTypeRepo)
         {
-            this.productRepository = productRepository;
+            this.productsRepo = productsRepo;
+            this.productBrandRepo = productBrandRepo;
+            this.productTypeRepo = productTypeRepo;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Product>>> GetProductsAsync()
+        public async Task<ActionResult<List<Product>>> GetProducts()
         {
-            var products = await productRepository.GetProductsAsync();
+            //apply specification class to return things
+            var spec = new ProductsWithTypesAndBrandsSpecification();
+
+            //type will be provided by constructor
+            var products = await productsRepo.ListAsync(spec);
             return Ok(products);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            return await productRepository.GetProductByIdAsync(id);
+            //apply specification class to return things
+            var spec = new ProductsWithTypesAndBrandsSpecification(id);
+
+            return await productsRepo.GetEntityWithSpec(spec);
         }
 
         [HttpGet("brands")]
         public async Task<ActionResult<IReadOnlyList<ProductBrand>>> GetProductBrands()
         {
-            return Ok(await productRepository.GetProductBrandsAsync());
+            return Ok(await productBrandRepo.ListAllAsync());
         }
 
 
         [HttpGet("types")]
         public async Task<ActionResult<IReadOnlyList<ProductType>>> GetProductTypes()
         {
-            return Ok(await productRepository.GetProductTypesAsync());
+            return Ok(await productTypeRepo.ListAllAsync());
         }
 
 

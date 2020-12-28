@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <Folder Include="Data\SeedData\" />
+    <Folder Include="Dtos\" />
   </ItemGroup>
 
 </Project>

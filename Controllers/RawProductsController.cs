@@ -16,6 +16,7 @@ namespace TessaWebAPI.Controllers
     {
         private readonly StoreContext storeContext;
 
+        //direct access to dbcontext
         public RawProductsController(StoreContext storeContext)
         {
             this.storeContext = storeContext;

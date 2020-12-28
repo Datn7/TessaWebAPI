@@ -40,6 +40,8 @@ namespace TessaWebAPI
             services.AddDbContext<StoreContext>(db => db.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             //use product repository pattern
             services.AddScoped<IProductRepository, ProductRepository>();
+            //use generic repository
+            services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
