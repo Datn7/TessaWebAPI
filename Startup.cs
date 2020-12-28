@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -13,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TessaWebAPI.Data;
+using TessaWebAPI.Helpers;
 using TessaWebAPI.Implementation;
 using TessaWebAPI.Interfaces;
 
@@ -42,6 +44,8 @@ namespace TessaWebAPI
             services.AddScoped<IProductRepository, ProductRepository>();
             //use generic repository
             services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
+            //add automapper
+            services.AddAutoMapper(typeof(MappingProfiles));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,6 +61,8 @@ namespace TessaWebAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            //use wwwroot for static files
+            app.UseStaticFiles();
 
             app.UseAuthorization();
 
