@@ -14,9 +14,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TessaWebAPI.Data;
+using TessaWebAPI.Errors;
+using TessaWebAPI.Exstensions;
 using TessaWebAPI.Helpers;
 using TessaWebAPI.Implementation;
 using TessaWebAPI.Interfaces;
+using TessaWebAPI.Middleware;
 
 namespace TessaWebAPI
 {
@@ -34,29 +37,36 @@ namespace TessaWebAPI
         {
 
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "TessaWebAPI", Version = "v1" });
-            });
+            
             //add sql sever connection link 
             services.AddDbContext<StoreContext>(db => db.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            //use product repository pattern
-            services.AddScoped<IProductRepository, ProductRepository>();
-            //use generic repository
-            services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
+           
             //add automapper
             services.AddAutoMapper(typeof(MappingProfiles));
+
+            //use my made exstensions for not overloading startup class
+            services.AddApplicationServices();
+
+            //use my swagger exstension
+            services.AddSwaggerDocumentation();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            
+             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TessaWebAPI v1"));
+                //app.UseDeveloperExceptionPage();
+                app.UseMiddleware<ExceptionMiddleware>(); //use custom exception middleware
+
+                //use my exstension for adding swagger
+                app.UseSwaggerDocumentation();
             }
+             
+
+            //redirects to ErrorController and passes error code
+            app.UseStatusCodePagesWithReExecute("/errors/{0}");
 
             app.UseHttpsRedirection();
 

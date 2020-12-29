@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 using TessaWebAPI.Data;
 using TessaWebAPI.Dtos;
 using TessaWebAPI.Entities;
+using TessaWebAPI.Errors;
 using TessaWebAPI.Interfaces;
 using TessaWebAPI.Specifications;
 
 namespace TessaWebAPI.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ProductsController : ControllerBase
+    
+    public class ProductsController : BaseApiController
     {
         private readonly IGenericRepository<Product> productsRepo;
         private readonly IGenericRepository<ProductBrand> productBrandRepo;
@@ -69,6 +69,9 @@ namespace TessaWebAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        //clearify response type that is passed during error for documenting swagger
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ProductToReturnDto>> GetProduct(int id)
         {
             //apply specification class to return things
@@ -90,6 +93,7 @@ namespace TessaWebAPI.Controllers
                 ProductType = product.ProductType.Name
             };
              */
+            if (product == null) return NotFound(new ApiResponse(404));
 
             return mapper.Map<Product, ProductToReturnDto>(product);
         }
