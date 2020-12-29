@@ -10,6 +10,7 @@ using TessaWebAPI.Data;
 using TessaWebAPI.Dtos;
 using TessaWebAPI.Entities;
 using TessaWebAPI.Errors;
+using TessaWebAPI.Helpers;
 using TessaWebAPI.Interfaces;
 using TessaWebAPI.Specifications;
 
@@ -39,10 +40,12 @@ namespace TessaWebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProducts()
+        public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetProducts([FromQuery]ProductSpecParams productParams)
         {
             //apply specification class to return things
-            var spec = new ProductsWithTypesAndBrandsSpecification();
+            var spec = new ProductsWithTypesAndBrandsSpecification(productParams);
+            var countSpec = new ProductWithFiltersForCountSpecification(productParams);
+            var totalItems = await productsRepo.CountAsync(countSpec);
 
             //type will be provided by constructor, just get products
             var products = await productsRepo.ListAsync(spec);
@@ -61,9 +64,10 @@ namespace TessaWebAPI.Controllers
                 ProductType = product.ProductType.Name
             }).ToList();
              */
+            var data = mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products);
 
             return Ok(
-                mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products)
+                new Pagination<ProductToReturnDto>(productParams.PageIndex, productParams.PageSize, totalItems, data)
                 );
 
         }

@@ -15,5 +15,7 @@ namespace TessaWebAPI.Interfaces
         Task<T> GetEntityWithSpec(ISpecification<T> specification);
         //get products with specification
         Task<IReadOnlyList<T>> ListAsync(ISpecification<T> specification);
+
+        Task<int> CountAsync(ISpecification<T> specification);
     }
 }

@@ -40,6 +40,11 @@ namespace TessaWebAPI.Implementation
             return await ApplySpecification(specification).ToListAsync();
         }
 
+        public async Task<int> CountAsync(ISpecification<T> specification)
+        {
+            return await ApplySpecification(specification).CountAsync();
+        }
+
         //PRIVATE METHODS
 
         //appy specification
@@ -47,5 +52,7 @@ namespace TessaWebAPI.Implementation
         {
             return SpecificationEvaluator<T>.GetQuery(storeContext.Set<T>().AsQueryable(), specification);
         }
+
+      
     }
 }

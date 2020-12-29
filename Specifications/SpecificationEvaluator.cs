@@ -19,6 +19,21 @@ namespace TessaWebAPI.Specifications
                 query = query.Where(specification.Criteria);
             }
 
+            if (specification.OrderByM != null)
+            {
+                query = query.OrderBy(specification.OrderByM);
+            }
+
+            if (specification.OrderByDescendingM != null)
+            {
+                query = query.OrderByDescending(specification.OrderByDescendingM);
+            }
+
+            if (specification.IsPagingEnabledM)
+            {
+                query = query.Skip(specification.SkipM).Take(specification.TakeM);
+            }
+
             query = specification.Includes.Aggregate(query, (current, include) => current.Include(include));
 
             return query;
