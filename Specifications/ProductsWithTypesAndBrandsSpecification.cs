@@ -11,7 +11,8 @@ namespace TessaWebAPI.Specifications
     {
         //use empty constructor
         public ProductsWithTypesAndBrandsSpecification(ProductSpecParams productParams)
-            :base(x=>
+            :base(x =>
+            (string.IsNullOrEmpty(productParams.Search) || x.Name.ToLower().Contains(productParams.Search)) &&
             (!productParams.BrandId.HasValue || x.ProductBrandId == productParams.BrandId) &&
             (!productParams.TypeId.HasValue || x.ProductTypeId == productParams.TypeId)
             )
