@@ -49,6 +49,15 @@ namespace TessaWebAPI
 
             //use my swagger exstension
             services.AddSwaggerDocumentation();
+
+            //add CORS
+            services.AddCors(opt =>
+            {
+                opt.AddPolicy("CorsPolicy", policy =>
+                {
+                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200");
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -73,6 +82,9 @@ namespace TessaWebAPI
             app.UseRouting();
             //use wwwroot for static files
             app.UseStaticFiles();
+
+            //use CORS
+            app.UseCors("CorsPolicy");
 
             app.UseAuthorization();
 
