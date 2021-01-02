@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,14 @@ namespace TessaWebAPI.Controllers
         {
             this.storeContext = storeContext;
         }
+
+        [HttpGet("testauth")]
+        [Authorize]
+        public ActionResult<string> GetSecretText()
+        {
+            return "sekretebi";
+        }
+
 
         [HttpGet("notfound")]
         public ActionResult GetNotFoundRequest()

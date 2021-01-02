@@ -22,6 +22,9 @@ namespace TessaWebAPI.Exstensions
             //add basket repository
             services.AddScoped<IBasketRepository, BasketRepository>();
 
+            //add token service
+            services.AddScoped<ITokenService, TokenService>();
+
             //configure validation api behavior
             services.Configure<ApiBehaviorOptions>(options =>
             {

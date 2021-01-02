@@ -42,6 +42,9 @@ namespace TessaWebAPI
             //add sql sever connection link 
             services.AddDbContext<StoreContext>(db => db.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            //add identity dbcontext
+            services.AddDbContext<AppIdentityDbContext>(x => x.UseSqlServer(Configuration.GetConnectionString("IdentityConnection")));
+
             //add redis
             services.AddSingleton<IConnectionMultiplexer>(c=>
             {
@@ -57,6 +60,9 @@ namespace TessaWebAPI
 
             //use my swagger exstension
             services.AddSwaggerDocumentation();
+
+            //add identity services with my exstension
+            services.AddIdentityServices(Configuration);
 
             //add CORS
             services.AddCors(opt =>
@@ -93,6 +99,9 @@ namespace TessaWebAPI
 
             //use CORS
             app.UseCors("CorsPolicy");
+
+            //add authentication
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
