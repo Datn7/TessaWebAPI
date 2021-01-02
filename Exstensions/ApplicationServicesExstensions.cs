@@ -19,6 +19,9 @@ namespace TessaWebAPI.Exstensions
             //use generic repository
             services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
 
+            //add basket repository
+            services.AddScoped<IBasketRepository, BasketRepository>();
+
             //configure validation api behavior
             services.Configure<ApiBehaviorOptions>(options =>
             {

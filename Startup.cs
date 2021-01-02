@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +41,13 @@ namespace TessaWebAPI
             
             //add sql sever connection link 
             services.AddDbContext<StoreContext>(db => db.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            //add redis
+            services.AddSingleton<IConnectionMultiplexer>(c=>
+            {
+                var cfg = ConfigurationOptions.Parse(Configuration.GetConnectionString("Redis"), true);
+                return ConnectionMultiplexer.Connect(cfg);
+            });
            
             //add automapper
             services.AddAutoMapper(typeof(MappingProfiles));
@@ -55,7 +63,7 @@ namespace TessaWebAPI
             {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200");
+                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200");
                 });
             });
         }
