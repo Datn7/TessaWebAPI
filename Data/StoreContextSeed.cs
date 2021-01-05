@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using TessaWebAPI.Entities;
+using TessaWebAPI.Entities.OrderAggregate;
 
 namespace TessaWebAPI.Data
 {
@@ -48,6 +49,19 @@ namespace TessaWebAPI.Data
                     foreach (var item in products)
                     {
                         storeContext.Products.Add(item);
+                    }
+
+                    await storeContext.SaveChangesAsync();
+                }
+
+                if (!storeContext.DeliveryMethods.Any())
+                {
+                    var dmData = File.ReadAllText("Data/SeedData/delivery.json");
+                    var methods = System.Text.Json.JsonSerializer.Deserialize<List<DeliveryMethod>>(dmData);
+
+                    foreach (var item in methods)
+                    {
+                        storeContext.DeliveryMethods.Add(item);
                     }
 
                     await storeContext.SaveChangesAsync();

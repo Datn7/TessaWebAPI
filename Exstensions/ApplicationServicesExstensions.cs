@@ -25,6 +25,12 @@ namespace TessaWebAPI.Exstensions
             //add token service
             services.AddScoped<ITokenService, TokenService>();
 
+            //add order service
+            services.AddScoped<IOrderService, OrderService>();
+
+            //add UnitOfWork service
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
             //configure validation api behavior
             services.Configure<ApiBehaviorOptions>(options =>
             {

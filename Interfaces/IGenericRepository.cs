@@ -17,5 +17,9 @@ namespace TessaWebAPI.Interfaces
         Task<IReadOnlyList<T>> ListAsync(ISpecification<T> specification);
 
         Task<int> CountAsync(ISpecification<T> specification);
+
+        void Add(T entity);
+        void Update(T entity);
+        void Delete(T entity);
     }
 }
